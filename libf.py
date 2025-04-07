@@ -1,13 +1,13 @@
 
 import json
 import requests
-import dearpygui.dearpygui as dpg
 import threading
 import time
 
 class ollama_lib:
     def __init__(self, JsonPath=None):
         self.fps = 30
+        self._model_refresh:bool = False
 
         self.host="http://127.0.0.1"
         self.port=11434
@@ -21,22 +21,20 @@ class ollama_lib:
         self._postApi = self.zh_api()
         
         self.model_list:list[ollama_model] = []
-        self.ModelUi_Thread:threading.Thread = None
+        self.ModeList_ShowTxt = ""
 
         self.Main_Thread:threading.Thread = threading.Thread(target=self.MainThread, daemon=True, name="Ollama Main Thread...")
         self.Main_Thread.start()
-        self._model_refresh:bool = False
+    
+    # def RUN(self):
+    #     self.Main_Thread:threading.Thread
 
     def MainThread(self):
         while True:
-            if self.ModelUi_Thread:
-                if not self.ModelUi_Thread.is_alive():
-                    self._model_refresh = False
-                    self.ModelUi_Thread = None
             if self._model_refresh:
-                # b, txt = self.get_models()
-                # dpg.set_value("_ModelList", txt) 
-                pass
+                _,self.ModeList_ShowTxt = self.get_models()
+            else:
+                self.ModeList_ShowTxt = "Close Get..."
             time.sleep( 1/self.fps )
 
     def zh_api(self):
@@ -53,6 +51,7 @@ class ollama_lib:
         # print(data)
 
     def get_models(self,CmdLog=False):
+        model_txt = ""
         # 获取所有的模型列表
         url = self._postApi + "/api/tags"
         response = requests.get(url).json()
@@ -76,7 +75,7 @@ class ollama_lib:
             if om.model_id in ps_model:
                 om.online = True
                 om.expires_at = ps_model[om.model_id]['expires_at']
-        if CmdLog:
+
             model_txt = "Model List"
             for md in self.model_list:
                 onlineMode = "***"
@@ -84,12 +83,9 @@ class ollama_lib:
                     onlineMode = "Online"
                 line = f"\n#   {md.name}  -  {md.size} : {md.quantization_level}  -  {md.format} : {md.quantization_level}  ->  {onlineMode} {md.expires_at}"
                 model_txt += line
+        if CmdLog:
             print( model_txt )
         return True, model_txt
-
-    # def Run_UI_thread(self, _target):
-    #     _Thread:threading.Thread = threading.Thread(target=self.MainThread, daemon=True)
-    #     pass
 
     def Order(self,order=""):
         help_txt = """
@@ -104,10 +100,7 @@ class ollama_lib:
         elif order == "model" or order == "m":
             self.get_models(CmdLog=True)
         elif order == "model_run" or order == "mr":
-            if not self.ModelUi_Thread:
-                self._model_refresh = True
-                self.ModelUi_Thread = threading.Thread(target=self._thread_ModelList_UI, daemon=True)
-                self.ModelUi_Thread.start()
+            self._model_refresh = True
         else:
             print("""
             --未知指令--
