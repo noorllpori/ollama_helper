@@ -81,7 +81,7 @@ class ollama_lib:
                 onlineMode = "***"
                 if md.online:
                     onlineMode = "Online"
-                line = f"\n#   {md.name}  -  {md.size} : {md.quantization_level}  -  {md.format} : {md.quantization_level}  ->  {onlineMode} {md.expires_at}"
+                line = f"\n#   {md.name}  -  {md.size} : {md.parameter_size}  -  {md.format} : {md.quantization_level}  ->  {onlineMode} {md.expires_at}"
                 model_txt += line
         if CmdLog:
             print( model_txt )
