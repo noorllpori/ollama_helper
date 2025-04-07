@@ -3,6 +3,6 @@ import libf
 
 ollama_init = libf.ollama_lib()
 
-while True:
-    od = input("#指令: ")
-    ollama_init.Order(od)
+# while True:
+#     od = input("#指令: ")
+#     ollama_init.Order(od)

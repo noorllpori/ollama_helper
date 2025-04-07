@@ -34,7 +34,9 @@ class ollama_lib:
                     self._model_refresh = False
                     self.ModelUi_Thread = None
             if self._model_refresh:
-                self.get_models()
+                # b, txt = self.get_models()
+                # dpg.set_value("_ModelList", txt) 
+                pass
             time.sleep( 1/self.fps )
 
     def zh_api(self):
@@ -83,23 +85,7 @@ class ollama_lib:
                 line = f"\n#   {md.name}  -  {md.size} : {md.quantization_level}  -  {md.format} : {md.quantization_level}  ->  {onlineMode} {md.expires_at}"
                 model_txt += line
             print( model_txt )
-        return True
-    
-    def _thread_ModelList_UI(self):
-        dpg.create_context()
-        # 创建主窗口
-        with dpg.window( width=400, height=300, tag="Main Window"):
-            dpg.add_text("这是一个最小的 Dear PyGui 窗口")
-
-        # 设置主窗口为 primary_window
-        dpg.create_viewport(title='Model List UI', width=400, height=300)
-        dpg.setup_dearpygui()
-        dpg.show_viewport()
-        dpg.set_primary_window("Main Window", True)
-        dpg.start_dearpygui()
-
-        # 清理
-        dpg.destroy_context()
+        return True, model_txt
 
     # def Run_UI_thread(self, _target):
     #     _Thread:threading.Thread = threading.Thread(target=self.MainThread, daemon=True)
@@ -110,14 +96,14 @@ class ollama_lib:
         Order Helper:
             help            <h>     获取帮助
             model           <m>     显示模型列表
-            model_list      <ml>    模型UI操作列表
+            model_run       <mr>    模型列表添加到循环获取中
         """
         if order == "": order="help"
         if order == "help" or order == "h":
             print(help_txt)
         elif order == "model" or order == "m":
             self.get_models(CmdLog=True)
-        elif order == "model_list" or order == "ml":
+        elif order == "model_run" or order == "mr":
             if not self.ModelUi_Thread:
                 self._model_refresh = True
                 self.ModelUi_Thread = threading.Thread(target=self._thread_ModelList_UI, daemon=True)
