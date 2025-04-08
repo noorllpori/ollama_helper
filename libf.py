@@ -3,6 +3,7 @@ import json
 import requests
 import threading
 import time
+from dateutil import parser
 
 class ollama_lib:
     def __init__(self, JsonPath=None):
@@ -75,6 +76,7 @@ class ollama_lib:
             if om.model_id in ps_model:
                 om.online = True
                 om.expires_at = ps_model[om.model_id]['expires_at']
+                om.expires_at_ts = self.iso8601_to_timestamp(om.expires_at)
 
             model_txt = "Model List"
             for md in self.model_list:
@@ -104,7 +106,12 @@ class ollama_lib:
         else:
             print("""
             --未知指令--
-            """)
+            """)    
+        
+    @staticmethod
+    def iso8601_to_timestamp(iso_str) -> float:
+        dt = parser.isoparse(iso_str)  # 自动处理7位微秒
+        return dt.timestamp()
 
 class ollama_model:
     def __init__(self,loadDict:dict):
@@ -117,10 +124,12 @@ class ollama_model:
         self.quantization_level = ""
         ## cmd show获取详细信息
         # modelfile
+        self.digest = ""
         self.ModelfileTxt=""
         ## 是否在热加载中
         self.online = False
         self.expires_at:str = ""
+        self.expires_at_ts:float = 0.0
 
         if loadDict:
             self.model_id = loadDict['model']
@@ -129,6 +138,7 @@ class ollama_model:
             self.format = loadDict['details']['format']
             self.parameter_size = loadDict['details']['parameter_size']
             self.quantization_level = loadDict['details']['quantization_level']
+            self.digest = loadDict['digest']
 
     def loadJson(self):
         pass
