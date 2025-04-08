@@ -16,7 +16,7 @@ class ollama_lib:
             self.settingJsonPath=JsonPath
         else:
             self.settingJsonPath="./setting.json"
-        self.get_setting()
+        # self.get_setting()
 
         self._postApi = self.zh_api()
         
