@@ -1,0 +1,8 @@
+/.cache
+/win64.env
+
+build
+dist
+__pycache__
+
+olala.exe

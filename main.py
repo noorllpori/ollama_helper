@@ -19,7 +19,7 @@ dpg.create_context()
 with dpg.window( width=500, height=270, tag="Main Window"):
     dpg.add_text("model list ...", tag='Model_list')
 
-dpg.set_frame_callback(100, update_data)
+dpg.set_frame_callback(24, update_data)
 
 dpg.create_viewport(title='Model List UI', width=900, height=270)
 dpg.setup_dearpygui()
