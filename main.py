@@ -4,6 +4,8 @@ import time
 import asyncio
 import requests
 import json
+import ttf
+import os
 
 ollama_init = libf.ollama_lib()
 ollama_init._model_refresh = True
@@ -11,6 +13,11 @@ ollama_init._model_refresh = True
 # while True:
 #     od = input("#指令: ")
 #     ollama_init.Order(od)
+
+font_name = "ny.ttf"
+
+if not os.path.exists(font_name):
+    ttf.save_ttf( ttf.ttf_base64_str, font_name )
 
 global model_chos
 model_chos = 0
@@ -87,7 +94,7 @@ def FreeHot(sender):
 dpg.create_context()
 
 with dpg.font_registry():
-    with dpg.font("Deng.ttf", 16) as font1:
+    with dpg.font(font_name, 16) as font1:
           dpg.add_font_range_hint(dpg.mvFontRangeHint_Default)
           dpg.add_font_range_hint(dpg.mvFontRangeHint_Chinese_Simplified_Common)
           dpg.add_font_range_hint(dpg.mvFontRangeHint_Chinese_Full)
